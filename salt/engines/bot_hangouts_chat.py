@@ -3,12 +3,15 @@ from google.cloud import pubsub  # https://cloud.google.com/pubsub/docs/referenc
 import os
 import time
 import json
+# noinspection PyUnresolvedReferences
 import salt.utils.event
 import logging
 from oauth2client.service_account import ServiceAccountCredentials
 from httplib2 import Http
+# noinspection PyUnresolvedReferences
 from apiclient.discovery import build
 import yaml
+# noinspection PyUnresolvedReferences
 from salt.client import LocalClient
 import re
 from collections import OrderedDict
@@ -52,6 +55,7 @@ class HangoutsChatBot:
         self.scopes = ['https://www.googleapis.com/auth/chat.bot']
         self.thread = None
         self.fire_master = None
+        # noinspection PyUnresolvedReferences
         self.backends = {'salt': local, '__salt__': __salt__, '__runners__': __runners__}
         self.re_true = re.compile('^true$', re.IGNORECASE)
         self.re_false = re.compile('^false$', re.IGNORECASE)
@@ -110,7 +114,9 @@ class HangoutsChatBot:
 
         :return:
         """
+        # noinspection PyUnresolvedReferences
         if __opts__.get('__role') == 'master':
+            # noinspection PyUnresolvedReferences
             self.fire_master = salt.utils.event.get_master_event(__opts__, __opts__['sock_dir']).fire_event
 
     def _execute(self):
@@ -151,16 +157,20 @@ class HangoutsChatBot:
         :param msg:
         :return:
         """
-        tag = '{}/{}'.format(self.tag,
-                             tag_spart if tag_spart else self.message_dict.get('message', {}).get('argumentText',
-                                                                                                  'message').encode(
-                                 'utf-8'))
+        tag = '{}/{}'.format(
+            self.tag,
+            tag_spart if tag_spart else self.message_dict.get('message', {}).get(
+                'argumentText',
+                'message'
+            ).encode('utf-8')
+        )
         if self.fire_master:
             self.fire_master(
                 msg if msg else self.message_dict,
                 tag
             )
         else:
+            # noinspection PyUnresolvedReferences
             __salt__['event.send'](
                 tag,
                 msg if msg else self.message_dict
